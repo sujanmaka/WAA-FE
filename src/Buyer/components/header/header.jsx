@@ -1,24 +1,8 @@
 import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { cartAction } from "../../store/config/storeConfig";
+import { useSelector } from "react-redux";
 
 const Header = () => {
   const cart = useSelector((state) => state.cartData.cart);
-
-  console.log(cart);
-
-  const dispatch = useDispatch;
-
-  const addToCart = () => {
-    let action = {
-      type: "add",
-      payload: {
-        id: 1,
-        title: "IPhone",
-      },
-    };
-    dispatch(cartAction.add(action));
-  };
 
   return (
     <div className="header">
@@ -53,9 +37,9 @@ const Header = () => {
           <div className="col-md-2 col-sm-3">
             <div className="cart">
               <div className="cart-icon">
-                <button onClick={() => addToCart()}>
+                <Link to={""}>
                   <i className="fa fa-shopping-cart"></i>
-                </button>
+                </Link>
               </div>
 
               <div className="cart-text">

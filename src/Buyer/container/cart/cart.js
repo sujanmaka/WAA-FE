@@ -1,6 +1,13 @@
+import { useSelector } from "react-redux";
+import CartDetail from "../../components/cart/cart";
 import "./cart.css";
 const Cart = () => {
 
+    const cart = useSelector(state => state.cartData.cart);
+
+    const carts = cart.map(data => {
+        return (<CartDetail productData={data}></CartDetail>);
+    });
 
     return (
         <>
@@ -10,7 +17,7 @@ const Cart = () => {
                         <div className="col-lg-12 col-md-12 col-12">
                             <h3 className="display-5 mb-2 text-center">Shopping Cart</h3>
                             <p className="mb-5 text-center">
-                                <i className="text-info font-weight-bold">3</i> items in your cart</p>
+                                <i className="text-info font-weight-bold">{cart.length}</i> items in your cart</p>
                             <table id="shoppingCart" className="table table-condensed table-responsive">
                                 <thead>
                                     <tr>
@@ -22,41 +29,8 @@ const Cart = () => {
                                 </thead>
                                 <tbody>
 
-                                    {/* Body Section */}
+                                    {carts}
 
-                                    <tr>
-                                        <td data-th="Product">
-                                            <div className="row">
-                                                <div className="col-md-3 text-left">
-                                                    <img src="https://via.placeholder.com/250x250/5fa9f8/ffffff" alt="" className="img-fluid d-none d-md-block rounded mb-2 shadow " />
-                                                </div>
-                                                <div className="col-md-9 text-left mt-sm-2">
-                                                    <h4>Product Name</h4>
-                                                    <p className="font-weight-light">Brand &amp; Name</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td data-th="Price">$49.00</td>
-                                        <td data-th="Quantity">
-                                            <input type="number" className="form-control form-control-lg text-center" defaultValue={"1"} />
-                                        </td>
-                                        <td className="actions" data-th="">
-                                            <div className="text-right">
-                                                <button class="btn btn-primary">
-                                                    <i class="fa-solid fa-rotate"></i>
-                                                </button>
-
-                                                <button class="btn btn-danger" style={{ "marginLeft": "10px" }}>
-                                                    <i class="fa-solid fa-trash"></i>
-                                                </button>
-
-
-                                            </div>
-                                        </td>
-                                    </tr>
-
-
-                                    {/* Body Section Ends */}
 
                                 </tbody>
                             </table>

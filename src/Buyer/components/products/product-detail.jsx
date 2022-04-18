@@ -1,5 +1,7 @@
-import { Fragment } from "react";
+import { Fragment, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { cartAction } from "../../store/config/storeConfig";
 
 // const data = {
 //   linkOne: {
@@ -10,6 +12,37 @@ import { Link } from "react-router-dom";
 // };
 
 const ProductDetail = () => {
+  const cart = useSelector((state) => state.cartData.cart);
+  const dispatch = useDispatch();
+
+  const qtyRef = useRef();
+
+  const getProductDetail = () => {
+    return {
+      id: 1,
+      product: "Blue Jacket",
+      brand: "Nike",
+      price: "552.00",
+      qty: qtyRef.current.value,
+    };
+  };
+
+  const addToCart = (e) => {
+    e.preventDefault();
+    dispatch(cartAction.add(getProductDetail()));
+  };
+
+  const executeSub = () => {
+    if (qtyRef.current.value > 0) {
+      qtyRef.current.value = qtyRef.current.value - 1;
+    }
+  };
+
+  const executeAdd = () => {
+    const data = qtyRef.current.value;
+    qtyRef.current.value = data + 1;
+  };
+
   return (
     <Fragment>
       {/* <BreadCums data={data} /> */}
@@ -107,14 +140,23 @@ const ProductDetail = () => {
 
               <form action="" className="purchase-form">
                 <div className="qt-area">
-                  <i className="fa fa-minus"></i>
+                  <i className="fa fa-minus" onClick={() => executeSub()}></i>
 
-                  <input name="quantity" className="qt" value="1" />
+                  <input
+                    name="quantity"
+                    className="qt"
+                    value="1"
+                    ref={qtyRef}
+                  />
 
-                  <i className="fa fa-plus"></i>
+                  <i className="fa fa-plus" onClick={() => executeAdd()}></i>
                 </div>
 
-                <button className="btn btn-theme" type="submit">
+                <button
+                  className="btn btn-theme"
+                  type="submit"
+                  onClick={(e) => addToCart(e)}
+                >
                   Add to cart
                 </button>
               </form>
