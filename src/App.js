@@ -1,10 +1,10 @@
-import logo from './logo.svg';
+import AdminMainContainer from './Admin/container/AdminMainContainer';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <p>This is Su's Branch</p>
+      <AdminMainContainer />
     </div>
   );
 }

@@ -1,0 +1,67 @@
+/* Styles for Admin*
+* @author: sulai
+* @modified: 17 Apr 2022
+*/
+
+.admin-container {
+    padding-top: 30px;
+  }
+  .admin-container .bcrumb {
+    margin-bottom: 20px;
+    color: '#dddddd';
+  }
+  .admin-container .bcrumb a.bc-item{
+    color: '#dddddd';
+  }
+  
+  .css-sghohy-MuiButtonBase-root-MuiButton-root.theme-bg{
+    background-color: #40BEA7;
+  }
+  
+  .css-sghohy-MuiButtonBase-root-MuiButton-root.theme-bg:hover{
+    background-color: #494949;
+  }
+
+ div.lbl-detail{
+    font-weight: bold;
+    font-size: small;
+    padding: 10px 0px 5px 0px;
+  }
+
+  div.btn-row{
+    text-align: center;
+  }
+
+  div.evt-status-info{
+    position: fixed;
+    top: 8%;
+    left: 50%;
+    text-align: center;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 100px;
+    font-size: small;
+    border: solid 1px #40BEA7;
+    background-color: #fff;
+    display: none;
+    box-shadow: 20;
+    color: #000;
+    font-weight: bold;
+    
+  }
+  
+  div.evt-status-modal{
+    font-size: small;
+    border: solid 1px #40BEA7;
+    font-weight: bold;
+    display: none;
+    width: 85%;
+    padding: 10px 8px;
+  }
+
+  div.evt-status-info div.status-info{
+    margin-top: 20px;
+    padding: 8px;
+  }
+  
+  
