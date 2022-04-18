@@ -63,5 +63,18 @@
     margin-top: 20px;
     padding: 8px;
   }
+
+  .modal-close{
+    cursor: pointer;
+    float: right;
+    text-decoration: underline;
+  }
+
+  a.cursor{
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  
   
   

@@ -18,20 +18,6 @@ const style = {
     p: 4,
 };
 
-const style2 = {
-    position: 'absolute',
-    top: '13%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 350,
-    bgcolor: 'background.paper',
-    border: '2px solid #ccc',
-    boxShadow: 0,
-    p: 4,
-};
-
-
-
 const rows = [
     { sn: 1, id: 111, lastName: 'Snow', firstName: 'Jon', email: 'sulai@gmail.com', date: '02/05/2022 00:08:12:00' },
     { sn: 2, id: 112, lastName: 'Lannister', firstName: 'Cersei', email: 'dean@miu.edu', date: '02/05/2022 00:08:12:00' },
@@ -82,6 +68,7 @@ export default function AdminSellers() {
         {
             field: 'date',
             headerName: 'Date Created',
+            type: 'dateTime',
             width: 220,
         },
         {
@@ -117,20 +104,13 @@ export default function AdminSellers() {
             width: 80,
             renderCell: (cellValues) => {
                 return (
-                    <a href="#" onClick={(event) => {
+                    <a className="cursor" onClick={(event) => {
                         handleDetailPopUp(event, cellValues)
                     }}>Detail</a>
                 )
             }
         },
-    ];
-
-    useEffect(() => {
-        setTimer(setTimeout(() => { setEvtStatus('')}, 4000))    
-      return () => {
-        clearTimeout(timer)
-      }
-    }, [evtStatus])  
+    ];  
 
     const fetchSellerById = async (id) => {
         await axios.get(`https://jsonplaceholder.typicode.com/posts/${id}`).then(
@@ -155,7 +135,6 @@ export default function AdminSellers() {
         //handleOpen2()
         
     } 
-
     
     const handleRejectClick = (e, cellValues) => {
         //alert('id: ' + cellValues.row.id + 'email: ' + cellValues.row.email)
@@ -166,8 +145,19 @@ export default function AdminSellers() {
 
     const handleRowClick = (param, event) => {
         console.log('row click: ' + param.row.id)
-        fetchSellerById(param.row.sn)
+        //fetchSellerById(param.row.sn)
     };
+
+    useEffect(() => {
+        setTimer(setTimeout(() => { setEvtStatus('')}, 4000))    
+      return () => {
+        clearTimeout(timer)
+      }
+    }, [evtStatus, timer])  
+
+    useEffect(()=>{
+        //fetchSellerById(1)
+    },[])
 
     return (
         <React.Fragment>
@@ -206,8 +196,8 @@ export default function AdminSellers() {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <a href="#" style={{ 'float': 'right' }} onClick={handleClose}>Close X</a>
-                    <AdminSellerDetail detail={detail} />
+                    <a className="modal-close" onClick={handleClose}>Close X</a>
+                    <AdminSellerDetail detail={detail} close={handleClose} />
                 </Box>
             </Modal>
 

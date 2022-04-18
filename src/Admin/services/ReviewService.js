@@ -1,23 +1,23 @@
 import axios from "axios";
 import AuthHeader from "./AuthHeader";
 
-const API_URL = '/sellers'
-const getAllPendingSellers = () => {
+const API_URL = '/reviews'
+const getAllPendingReviews = () => {
     return axios.get(`${API_URL}/`, { headers: AuthHeader() })
 }
 
-const getSellerById = (id) =>{
+const getReviewById = (id) =>{
     return axios.get(`${API_URL}/${id}`, { headers: AuthHeader() })
 }
 
-const updateSellerById = (id) =>{    
+const updateReviewById = (id) =>{    
     return axios.put(`${API_URL}/${id}`,{ headers: AuthHeader() })
 }
 
 
-const SellerService = {
-    getAllPendingSellers,
-    getSellerById,
-    updateSellerById,
+const ReviewService = {
+    getAllPendingReviews,
+    getReviewById,
+    updateReviewById,
 }
-export default SellerService
+export default ReviewService
