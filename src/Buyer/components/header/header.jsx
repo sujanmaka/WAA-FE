@@ -1,6 +1,25 @@
 import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { cartAction } from "../../store/config/storeConfig";
 
 const Header = () => {
+  const cart = useSelector((state) => state.cartData.cart);
+
+  console.log(cart);
+
+  const dispatch = useDispatch;
+
+  const addToCart = () => {
+    let action = {
+      type: "add",
+      payload: {
+        id: 1,
+        title: "IPhone",
+      },
+    };
+    dispatch(cartAction.add(action));
+  };
+
   return (
     <div className="header">
       <div className="container">
@@ -34,14 +53,15 @@ const Header = () => {
           <div className="col-md-2 col-sm-3">
             <div className="cart">
               <div className="cart-icon">
-                <Link to="">
+                <button onClick={() => addToCart()}>
                   <i className="fa fa-shopping-cart"></i>
-                </Link>
+                </button>
               </div>
 
               <div className="cart-text">
                 SHOPPING CART
-                <br />0 items - $0.00
+                <br />
+                {cart.length} items - $0.00
               </div>
             </div>
           </div>

@@ -1,11 +1,6 @@
 import "./cart.css";
-import { useNavigate } from 'react-router';
-import { Link } from "react-router-dom";
-
-
 const Cart = () => {
 
-    const navigate = useNavigate();
 
     return (
         <>
@@ -48,11 +43,11 @@ const Cart = () => {
                                         <td className="actions" data-th="">
                                             <div className="text-right">
                                                 <button class="btn btn-primary">
-                                                    Update
+                                                    <i class="fa-solid fa-rotate"></i>
                                                 </button>
 
-                                                <button class="btn btn-danger">
-                                                    X
+                                                <button class="btn btn-danger" style={{ "marginLeft": "10px" }}>
+                                                    <i class="fa-solid fa-trash"></i>
                                                 </button>
 
 

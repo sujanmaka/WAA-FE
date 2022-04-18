@@ -117,34 +117,6 @@ const ProductDetail = () => {
                 <button className="btn btn-theme" type="submit">
                   Add to cart
                 </button>
-
-                <div className="social-share">
-                  <ul>
-                    <li>
-                      <Link to="">
-                        <i className="fa fa-facebook"></i>
-                      </Link>
-                    </li>
-
-                    <li>
-                      <Link to="">
-                        <i className="fa fa-twitter"></i>
-                      </Link>
-                    </li>
-
-                    <li>
-                      <Link to="">
-                        <i className="fa fa-google-plus"></i>
-                      </Link>
-                    </li>
-
-                    <li>
-                      <Link to="">
-                        <i className="fa fa-linkedin"></i>
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
               </form>
 
               <p>
@@ -157,7 +129,7 @@ const ProductDetail = () => {
                 woocommerce, wordpress
               </p>
 
-              <ul className="product-info-btn">
+              {/* <ul className="product-info-btn">
                 <li>
                   <Link to="">
                     <i className="fa fa-heart-o"></i> Wishlist
@@ -181,7 +153,7 @@ const ProductDetail = () => {
                     <i className="fa fa-print"></i> Print
                   </Link>
                 </li>
-              </ul>
+              </ul> */}
 
               <p>
                 <i className="fa fa-check"></i> Let's start with the most
@@ -231,7 +203,25 @@ const ProductDetail = () => {
                 </div>
               </div>
 
-              <div className="tab-pane" id="reviews"></div>
+              <div className="tab-pane" id="reviews">
+                <div className="product-desc">
+                  <h2>Product Review</h2>
+                  <p>
+                    Ultricies et consectetur rhoncus lorem mattis, ligula
+                    interdum nibh dolor ipsum, venenatis ultrices sem nisl
+                    senectus phasellus lectus facilisis gravida curabitur
+                    interdum pretium et pellentesque nullam auctor vestibulum
+                    aenean ipsum placerat erat volutpat lectus mi est lacinia
+                    sociosqu, pretium habitasse aenean eros tristique augue a
+                    vivamus ac, sapien blandit nullam et neque curabitur varius
+                    nostra dui dictum cras orci congue. Ultricies et consectetur
+                    rhoncus lorem mattis, ligula interdum nibh dolor ipsum,
+                    venenatis ultrices sem nisl senectus phasellus lectus
+                    facilisis gravida curabitur interdum pretium et pellentesque
+                    nullam auctor vestibulum aenean ipsum placerat
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -250,125 +240,7 @@ const ProductDetail = () => {
 
             <div className="tab-content">
               <div className="tab-pane active" id="related">
-                <div className="col-md-3 col-sm-4">
-                  <div className="single-product">
-                    <div className="product-block">
-                      <img
-                        src="/images/product-1.jpg"
-                        alt=""
-                        className="thumbnail"
-                      />
-
-                      <div className="product-description text-center">
-                        <p className="title">Date Tiffany Torchiere</p>
-
-                        <p className="price">$ 55.00</p>
-                      </div>
-
-                      <div className="product-hover">
-                        <ul>
-                          <li>
-                            <Link to="">
-                              <i className="fa fa-cart-arrow-down"></i>
-                            </Link>
-                          </li>
-
-                          <li>
-                            <Link to="">
-                              <i className="fa fa-arrows-h"></i>
-                            </Link>
-                          </li>
-
-                          <li>
-                            <Link to="">
-                              <i className="fa fa-heart-o"></i>
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-md-3 col-sm-4">
-                  <div className="single-product">
-                    <div className="product-block">
-                      <img
-                        src="/images/product-2.jpg"
-                        alt=""
-                        className="thumbnail"
-                      />
-
-                      <div className="product-description text-center">
-                        <p className="title">Date Tiffany Torchiere</p>
-
-                        <p className="price">$ 55.00</p>
-                      </div>
-
-                      <div className="product-hover">
-                        <ul>
-                          <li>
-                            <Link to="">
-                              <i className="fa fa-cart-arrow-down"></i>
-                            </Link>
-                          </li>
-
-                          <li>
-                            <Link to="">
-                              <i className="fa fa-arrows-h"></i>
-                            </Link>
-                          </li>
-
-                          <li>
-                            <Link to="">
-                              <i className="fa fa-heart-o"></i>
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-md-3 col-sm-4">
-                  <div className="single-product">
-                    <div className="product-block">
-                      <img
-                        src="/images/product-3.jpg"
-                        alt=""
-                        className="thumbnail"
-                      />
-
-                      <div className="product-description text-center">
-                        <p className="title">Date Tiffany Torchiere</p>
-
-                        <p className="price">$ 55.00</p>
-                      </div>
-
-                      <div className="product-hover">
-                        <ul>
-                          <li>
-                            <Link to="">
-                              <i className="fa fa-cart-arrow-down"></i>
-                            </Link>
-                          </li>
-
-                          <li>
-                            <Link to="">
-                              <i className="fa fa-arrows-h"></i>
-                            </Link>
-                          </li>
-
-                          <li>
-                            <Link to="">
-                              <i className="fa fa-heart-o"></i>
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                {/* Related Product */}
 
                 <div className="col-md-3 col-sm-4">
                   <div className="single-product">
@@ -392,23 +264,13 @@ const ProductDetail = () => {
                               <i className="fa fa-cart-arrow-down"></i>
                             </Link>
                           </li>
-
-                          <li>
-                            <Link to="">
-                              <i className="fa fa-arrows-h"></i>
-                            </Link>
-                          </li>
-
-                          <li>
-                            <Link to="">
-                              <i className="fa fa-heart-o"></i>
-                            </Link>
-                          </li>
                         </ul>
                       </div>
                     </div>
                   </div>
                 </div>
+
+                {/* End of Realted Product */}
               </div>
             </div>
           </div>
