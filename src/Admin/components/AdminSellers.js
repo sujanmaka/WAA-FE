@@ -1,80 +1,85 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
 import { Button } from '@mui/material';
 import AdminSellerDetail from './AdminSellerDetail';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-import axios from 'axios'
+import SellerService from '../services/SellerService';
+import Spinner from "../../components/loader/Loader";
+import WAA from '../../api/api';
 
 const style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 600,
+    width: 400,
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
 };
 
-const rows = [
-    { sn: 1, id: 111, lastName: 'Snow', firstName: 'Jon', email: 'sulai@gmail.com', date: '02/05/2022 00:08:12:00' },
-    { sn: 2, id: 112, lastName: 'Lannister', firstName: 'Cersei', email: 'dean@miu.edu', date: '02/05/2022 00:08:12:00' },
-    { sn: 3, id: 113, lastName: 'Lannister', firstName: 'Jaime', email: 'dean@miu.edu', date: '02/05/2022 00:08:12:00' },
-    { sn: 4, id: 114, lastName: 'Stark', firstName: 'Arya', email: 'dean@miu.edu', date: '02/05/2022 00:08:12:00' },
-    { sn: 5, id: 115, lastName: 'Targaryen', firstName: 'Daenerys', email: 'dean@miu.edu', date: '02/05/2022 00:08:12:00' },
-    { sn: 6, id: 116, lastName: 'Melisandre', firstName: null, email: 'dean456@miu.edu', date: '02/05/2022 00:08:12:00' },
-    { sn: 7, id: 117, lastName: 'Clifford', firstName: 'Ferrara', email: 'dean@miu.edu', date: '02/05/2022 00:08:12:00' },
-    { sn: 8, id: 118, lastName: 'Frances', firstName: 'Rossini', email: 'dean@miu.edu', date: '02/05/2022 00:08:12:00' },
-    { sn: 9, id: 119, lastName: 'Roxie', firstName: 'Harvey', email: 'dean@miu.edu', date: '02/05/2022 00:08:12:00' },
-    { sn: 10, id: 120, lastName: 'Snow', firstName: 'Jon', email: 'sulai@gmail.com', date: '02/05/2022 00:08:12:00' },
-    { sn: 11, id: 121, lastName: 'Lannister', firstName: 'Cersei', email: 'dean@miu.edu', date: '02/05/2022 00:08:12:00' },
-    { sn: 12, id: 122, lastName: 'Lannister', firstName: 'Jaime', email: 'dean@miu.edu', date: '02/05/2022 00:08:12:00' },
-    { sn: 13, id: 123, lastName: 'Stark', firstName: 'Arya', email: 'dean@miu.edu', date: '02/05/2022 00:08:12:00' },
-];
+const getDateFormat = (d) => {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const m = new Date(d);
+    const day = days[m.getDay()];
+    const month = months[m.getMonth()];
+    let hours = m.getHours();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    hours = hours < 10 ? '0' + hours : hours;
+    const dateString =
+        m.getUTCDate() + " " + month + " " +
+        m.getUTCFullYear() + " - " +
+        //("0" + m.getUTCHours()).slice(-2) + ":" +
+        hours + ":" +
+        ("0" + m.getUTCMinutes()).slice(-2) + ":" +
+        ("0" + m.getUTCSeconds()).slice(-2) + " " + ampm;
+
+    //console.log('date is ' + dateString);
+    return dateString;
+}
+
+export const STATUS = {
+    approve: 'APPROVED',
+    reject: 'DECLINED',
+    created: 'CREATED'
+}
 
 export default function AdminSellers() {
 
+    console.log('ADMIN SELLER RENDER')
+
+    const [pageInfo, setPageInfo] = useState('')
+    const [rows, setRows] = React.useState([])
+    const [isLoading, setIsLoading] = useState(false);
     const [open, setOpen] = React.useState(false);
-    const [detail, setDetail] = React.useState(0)
+    const [detail, setDetail] = React.useState({})
     const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const handleClose = () => {
+        setOpen(false)
+        setPropUpdateStatus('');
+    };
 
-    
-    const [evtStatus, setEvtStatus] = React.useState('')
+
+    const [onPageUpdateStatus, setOnPageUpdateStatus] = React.useState('')
+    const [propUpdateStatus, setPropUpdateStatus]= React.useState('')
     const [reject, setReject] = React.useState(false)
-    const [timer, setTimer] = React.useState(0)
-    
-    const columns = [
-        { field: 'sn', headerName: 'SN', width: 40 },
-        { field: 'id', headerName: 'Id' },
-        {
-            field: 'firstName',
-            headerName: 'First name',
-            width: 160,
-        },
 
+    const columns = [
+        { field: 'sn', headerName: 'SN', width: 20, },
+        { field: 'id', headerName: 'Id' },
+        { field: 'userId', headerName: 'UserId', width: 160, },
+        { field: 'name', headerName: 'Name', width: 160, },
+        { field: 'email', headerName: 'Email', width: 180, },
         {
-            field: 'lastName',
-            headerName: 'Last name',
-            width: 160,
+            field: 'createdDate', headerName: 'Date Created', type: 'dateTime', width: 240,
         },
         {
-            field: 'email',
-            headerName: 'Email',
-            width: 190,
-        },
-        {
-            field: 'date',
-            headerName: 'Date Created',
-            type: 'dateTime',
-            width: 220,
-        },
-        {
-            field: 'actions',
-            headerName: 'Actions',
-            width: 240,
+            field: 'actions', headerName: 'Actions', width: 240,
             renderCell: (cellValues) => {
                 return (
                     <div>
@@ -99,9 +104,7 @@ export default function AdminSellers() {
             }
         },
         {
-            field: 'detail',
-            headerName: 'Detail',
-            width: 80,
+            field: 'detail', headerName: 'Detail', width: 80,
             renderCell: (cellValues) => {
                 return (
                     <a className="cursor" onClick={(event) => {
@@ -110,54 +113,115 @@ export default function AdminSellers() {
                 )
             }
         },
-    ];  
+    ];
 
-    const fetchSellerById = async (id) => {
-        await axios.get(`https://jsonplaceholder.typicode.com/posts/${id}`).then(
+    const fetchSellerDetail = (obj) => {
+        setDetail(obj)
+        handleOpen()
+    }
+
+    const fetchAllCreatedSeller = () => {
+        setIsLoading(true);
+        SellerService.getAllSellers().then(
             res => {
-                console.log(res)
-                setDetail(res)
-                handleOpen();
+                console.log('getAllSellers()')
+                setIsLoading(false);
+                let count = 0
+                let obj = [];//[{}]
+                obj = res.data;
+                let newObj = []
+
+                for (let i = 0; i < obj.length; i++) {
+                    if (obj[i].status == STATUS.created) {
+                        newObj.push(obj[i])
+                    }
+                }
+                newObj.map(r => {
+                    r['sn'] = ++count
+                    r['createdDate'] = getDateFormat(r['createdDate'])
+                })
+
+                setRows(newObj)
+                //console.log(newObj.length)
+                if (newObj.length > 0) {
+                    setPageInfo('List of pending sellers required to approve: ')
+                } else {
+                    setPageInfo('There is no pending sellers to approve. ')
+                }
+                //console.log(Object.keys(res.data).length)                
             }
-        )
+        ).catch((error) => {
+            setIsLoading(false);
+
+        });
+    }
+
+    const updateSellerStatus = (userId, id, data, onPage) => {
+        setIsLoading(true)
+        SellerService.updateSellerById(id, data).then(
+            res => {
+                if (onPage) {
+                    setIsLoading(false);
+                    if (data.status === STATUS.approve) {
+                        setOnPageUpdateStatus('Account Approved for UserId : ' + userId + '')
+                        setReject(false)
+                    } else {
+                        setOnPageUpdateStatus('Account Rejected for UserId : ' + userId + '')
+                        setReject(true)
+                    }
+                    setTimeout(() => {
+                        setOnPageUpdateStatus('');
+                    }, 2000);
+                }else{
+                    if (data.status === STATUS.approve) {
+                        setPropUpdateStatus('Account : ' + userId + ' has been approved.')
+                        setReject(false)
+                    }else{
+                        setPropUpdateStatus('Account : ' + userId + ' has been rejected.')
+                        setReject(true)
+                    }
+                }
+
+                fetchAllCreatedSeller()
+            }
+        ).catch((error) => {
+            setIsLoading(false);
+
+        });
     }
 
     const handleDetailPopUp = async (e, cellValues) => {
-        console.log('click detail: ' + cellValues.row.sn)
-        fetchSellerById(cellValues.row.sn)
-    }
-
-    const handleApproveClick = (e, cellValues) => {
-        //alert('id: ' + cellValues.row.id + 'email: ' + cellValues.row.email)
-        console.log(cellValues);
-        setEvtStatus('Account Approved : ' + cellValues.row.email + '')
-        setReject(false)
-        //handleOpen2()
-        
-    } 
-    
-    const handleRejectClick = (e, cellValues) => {
-        //alert('id: ' + cellValues.row.id + 'email: ' + cellValues.row.email)
-        //console.log(cellValues);
-        setEvtStatus('Account Rejected: ' + cellValues.row.email + '')
-        setReject(true)
+        fetchSellerDetail(cellValues.row)
     }
 
     const handleRowClick = (param, event) => {
-        console.log('row click: ' + param.row.id)
-        //fetchSellerById(param.row.sn)
+        fetchSellerDetail(param.row)
     };
 
-    useEffect(() => {
-        setTimer(setTimeout(() => { setEvtStatus('')}, 4000))    
-      return () => {
-        clearTimeout(timer)
-      }
-    }, [evtStatus, timer])  
 
-    useEffect(()=>{
-        //fetchSellerById(1)
-    },[])
+    const handleApproveClick = useCallback(
+        (e, cellValues) => {
+            const data = { 
+                'status' : STATUS.approve,
+                'declineReason' : ''
+            }
+            updateSellerStatus(cellValues.row.userId, cellValues.row.id, data, true)
+        }, [])
+
+    const handleRejectClick = (e, cellValues) => {
+        const data = { 
+            'status' : STATUS.reject,
+            'declineReason' : ''
+        }
+        updateSellerStatus(cellValues.row.userId, cellValues.row.id,data, true)
+    }
+
+    useEffect(() => {
+        fetchAllCreatedSeller()
+    }, [])
+
+
+
 
     return (
         <React.Fragment>
@@ -167,26 +231,32 @@ export default function AdminSellers() {
                 <span style={{ 'color': '#494949' }} >Pending Sellers</span>
             </div>
             <h2>Pending Sellers</h2>
-            <p>List of pending sellers required to approve: </p>
-            <div style={{ height: 600, width: '100%' }}>
-                <DataGrid
-                    initialState={{
-                        columns: {
-                            columnVisibilityModel: {
-                                // Hide columns id, the other columns will remain visible
-                                id: false,
+            <p>{pageInfo}</p>
+            <div style={{ height: 450, width: '100%' }}>
+                {isLoading ? (
+                    <Spinner />
+                ) : (
+                    (rows.length > 0) &&
+                    <DataGrid
+                        initialState={{
+                            columns: {
+                                columnVisibilityModel: {
+                                    // Hide columns id, the other columns will remain visible
+                                    id: false,
+                                },
                             },
-                        },
-                    }}
-                    rows={rows}
-                    columns={columns}
-                    hiddenColumnModel={['id']}
-                    pageSize={10}
-                    rowsPerPageOptions={[8]}
-                    handleApproveClick
-                    onRowDoubleClick={handleRowClick}
-                    disableSelectionOnClick
-                />
+                        }}
+                        rows={rows}
+                        columns={columns}
+                        hiddenColumnModel={['id']}
+                        pageSize={6}
+                        rowsPerPageOptions={[6]}
+                        handleApproveClick
+                        onRowDoubleClick={handleRowClick}
+                        disableSelectionOnClick
+                    />
+                )
+                }
             </div>
 
             <Modal
@@ -197,13 +267,14 @@ export default function AdminSellers() {
             >
                 <Box sx={style}>
                     <a className="modal-close" onClick={handleClose}>Close X</a>
-                    <AdminSellerDetail detail={detail} close={handleClose} />
+                    <AdminSellerDetail detail={detail} close={handleClose} updateSellerStatus={updateSellerStatus} propUpdateStatus={propUpdateStatus} reject={reject}/>
                 </Box>
             </Modal>
 
-            <div className='evt-status-info' style={ evtStatus !== '' ? {display: 'block'} : { display: 'none' }}>
-                <div className='status-info' style={ reject ? {color : 'red'} : {color: '#000'}}>
-                    {evtStatus}
+
+            <div className='evt-status-info' style={onPageUpdateStatus !== '' ? { display: 'block' } : { display: 'none' }}>
+                <div className='status-info' style={reject ? { color: 'red' } : { color: '#000' }}>
+                    {onPageUpdateStatus}
                 </div>
             </div>
 

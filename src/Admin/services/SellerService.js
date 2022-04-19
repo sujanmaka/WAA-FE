@@ -1,22 +1,21 @@
-import axios from "axios";
-import AuthHeader from "./AuthHeader";
+import WAA, { API_URL } from "../../api/api";
 
-const API_URL = '/sellers'
-const getAllPendingSellers = () => {
-    return axios.get(`${API_URL}/`, { headers: AuthHeader() })
+
+const getAllSellers = () => {
+    return WAA.get(API_URL.adminSellers)
 }
 
 const getSellerById = (id) =>{
-    return axios.get(`${API_URL}/${id}`, { headers: AuthHeader() })
+    return WAA.get(`${API_URL.adminSellers}/${id}`)
 }
 
-const updateSellerById = (id) =>{    
-    return axios.put(`${API_URL}/${id}`,{ headers: AuthHeader() })
+const updateSellerById = (id, data) =>{    
+    return WAA.put(`${API_URL.adminSellers}/${id}`, data)
 }
 
 
 const SellerService = {
-    getAllPendingSellers,
+    getAllSellers,
     getSellerById,
     updateSellerById,
 }

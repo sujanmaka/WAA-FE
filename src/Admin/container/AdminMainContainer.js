@@ -7,7 +7,7 @@ import Appbar from '../components/Appbar'
 export default function AdminMainContainer() {
     return (
         <React.Fragment>
-            <Appbar />
+            {/* <Appbar /> */}
             <AdminDashboard />
         </React.Fragment>
 

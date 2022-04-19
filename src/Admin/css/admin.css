@@ -34,12 +34,12 @@
 
   div.evt-status-info{
     position: fixed;
-    top: 8%;
+    top: 5%;
     left: 50%;
     text-align: center;
     transform: translate(-50%, -50%);
     width: 400px;
-    height: 100px;
+    height: 60px;
     font-size: small;
     border: solid 1px #40BEA7;
     background-color: #fff;
@@ -47,9 +47,14 @@
     box-shadow: 20;
     color: #000;
     font-weight: bold;
-    
+    z-index: 999999999;
+  }  
+ 
+  div.evt-status-info div.status-info{
+    margin-top: 10px;
+    padding: 8px;
   }
-  
+
   div.evt-status-modal{
     font-size: small;
     border: solid 1px #40BEA7;
@@ -59,10 +64,6 @@
     padding: 10px 8px;
   }
 
-  div.evt-status-info div.status-info{
-    margin-top: 20px;
-    padding: 8px;
-  }
 
   .modal-close{
     cursor: pointer;
