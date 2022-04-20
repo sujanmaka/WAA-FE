@@ -1,19 +1,20 @@
-import {AppBar, Avatar, Box, IconButton, Link, Menu, MenuItem, Toolbar, Typography} from "@material-ui/core";
-import {ExitToApp as LogOutIcon, Menu as MenuIcon, Person} from "@material-ui/icons";
+import { AppBar, Avatar, Box, IconButton, Link, Menu, MenuItem, Toolbar, Typography } from "@material-ui/core";
+import { ExitToApp as LogOutIcon, Menu as MenuIcon, Person } from "@material-ui/icons";
 import classNames from "classnames";
-import React, {useEffect, useState} from "react";
-import {useHistory} from "react-router-dom";
-import WAA, {API_URL} from "../../api/api";
+import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import WAA, { API_URL } from "../../api/api";
 import logo from "../../assets/img/logo.png";
 // context
-import {toggleSidebar, useLayoutDispatch} from "../../context/LayoutContext";
-import {useUserDispatch} from "../../context/UserContext";
-import {AppUtils} from "../../utils/appUtils";
-import {LOGOUT_SUCCESS} from "../../utils/constants";
+import { toggleSidebar, useLayoutDispatch } from "../../context/LayoutContext";
+import { useUserDispatch } from "../../context/UserContext";
+import { AppUtils } from "../../utils/appUtils";
+import { LOGOUT_SUCCESS } from "../../utils/constants";
 import styles from "./style";
 import AddAlertMessage from "../alert/Alert";
-import {SOMETHING_WENT_WRONG, USER_ID} from "../../utils/constants/index";
-import {LocalStorage} from "../../utils/storage/localStorage";
+import { SOMETHING_WENT_WRONG, USER_ID } from "../../utils/constants/index";
+import { LocalStorage } from "../../utils/storage/localStorage";
+import Button from '@mui/material/Button';
 
 export default function Header(props) {
   const [userFullName, setUserFullName] = useState([]);
@@ -26,19 +27,28 @@ export default function Header(props) {
   // local
   var [profileMenu, setProfileMenu] = useState(null);
 
-  const getUsername = () => {
-    WAA.get(API_URL.user)
-      .then(response => {
-        console.log(response)
-        setUserFullName(response.data.fullName);
-      }).catch(error => {
-        AddAlertMessage({ type: "error", message: SOMETHING_WENT_WRONG });
-      })
-  }
+  //sulai: added app bar link
+  const [anchorElNav, setAnchorElNav] = React.useState(null);
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+  const handleOpenNavMenu = (event) => {
+    setAnchorElNav(event.currentTarget);
+  };
 
-  useEffect(() => {
-    getUsername();
-  }, []);
+  // const getUsername = () => {
+  //   WAA.get(API_URL.user)
+  //     .then(response => {
+  //       console.log(response)
+  //       setUserFullName(response.data.fullName);
+  //     }).catch(error => {
+  //       AddAlertMessage({ type: "error", message: SOMETHING_WENT_WRONG });
+  //     })
+  // }
+
+  // useEffect(() => {
+  //   getUsername();
+  // }, []);
 
   const logout = () => {
     WAA.get(API_URL.logout)
@@ -56,10 +66,70 @@ export default function Header(props) {
   return (
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
-        <img src={logo} alt="Mini Online Market" width="36"></img>
-        <Typography variant="h6" className={classes.brand}>
-          Mini Online Market: Role : {AppUtils.getUserRole()}
+        {/* ------ sulai: Menu List When Collapse Responsive - Start ----*/}
+        <Box sx={{ flexGrow: 0, display: { xs: 'flex', md: 'none' } }}>
+          <IconButton 
+            size="medium"
+            aria-label="account of current user"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
+            onClick={handleOpenNavMenu}
+            color="inherit"
+          >
+            <MenuIcon />
+          </IconButton>
+          <Menu id="menu-appbar"
+            anchorEl={anchorElNav}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+            open={Boolean(anchorElNav)}
+            onClose={handleCloseNavMenu}
+            sx={{
+              display: { xs: 'block', md: 'none' },
+            }}>
+            <MenuItem onClick={handleCloseNavMenu}>
+              <Typography><a href="/admin/dashboard/sellers">Seller</a></Typography>
+            </MenuItem>
+            <MenuItem onClick={handleCloseNavMenu}>
+              <Typography ><a href="/admin/dashboard/reviews">Review</a></Typography>
+            </MenuItem>
+            {/* Right Side  Menu Items */}
+          </Menu>
+        </Box>
+        {/* ------ sulai: Menu List When Collapse Responsive - End ----*/}
+        <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
+          <Avatar src={logo} alt="Mini Online Market" />
+        </Box>
+        <Typography variant="h6"
+          noWrap
+          component="div"
+          sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}>
+          Mini Online Market: Role : {AppUtils.getUserRole()} :: &nbsp;&nbsp;
         </Typography>
+
+        {/* ------ sulai: Wide Menu - Start ----*/}
+        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          {/* Left Side Menu Items */}
+          <Button onClick={handleCloseNavMenu}
+            sx={{ my: 2, color: 'white', display: 'block' }}
+          >
+            <a className={classes.aStyleWide} href="/admin/dashboard/sellers">Sellers</a>
+          </Button>
+          <Button onClick={handleCloseNavMenu}
+            sx={{ my: 2, color: 'white', display: 'block' }}
+          >
+            <a className={classes.aStyleWide} href="/admin/dashboard/reviews">Reviews</a>
+          </Button>
+
+        </Box>
+        {/* ------ sulai: Wide Menu - End ----*/}
         <Box display="flex" className={classes.userProfileMenu} justifyContent="center" alignItems="center" onClick={e => setProfileMenu(e.currentTarget)}>
           <Typography variant="body1" className={classes.username}>
             {userFullName}
