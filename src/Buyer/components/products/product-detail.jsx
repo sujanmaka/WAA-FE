@@ -225,7 +225,7 @@ const ProductDetail = () => {
             <ul className="nav nav-tabs nav-single-product-tabs">
               <li className="active">
                 <Link to="" data-toggle="tab">
-                  Reviews
+                  Product Description
                 </Link>
               </li>
             </ul>
@@ -234,7 +234,7 @@ const ProductDetail = () => {
               <div className="tab-pane active" id="reviews">
                 <div className="product-desc">
                   <h2>Product Review</h2>
-                  <Review productId={productDetail.id} flag={flag}></Review>
+                  <p>{productDetail.description}</p>
                 </div>
               </div>
             </div>
