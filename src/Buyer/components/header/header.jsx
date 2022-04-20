@@ -4,13 +4,15 @@ import { useSelector } from "react-redux";
 const Header = () => {
   const cart = useSelector((state) => state.cartData.cart);
 
+  const totalAmount = useSelector((state) => state.cartData.totalAmount);
+
   return (
     <div className="header">
       <div className="container">
         <div className="row">
           <div className="col-md-3 col-sm-4">
             <div className="logo">
-              <Link to="index.html">
+              <Link to="/">
                 <img src="/images/logo.png" alt="Orani E-shop" />
               </Link>
             </div>
@@ -45,7 +47,7 @@ const Header = () => {
               <div className="cart-text">
                 SHOPPING CART
                 <br />
-                {cart.length} items - $0.00
+                {cart.length} items - ${totalAmount}
               </div>
             </div>
           </div>

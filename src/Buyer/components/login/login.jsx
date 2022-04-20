@@ -1,34 +1,28 @@
-import { useEffect, useRef, useState } from "react";
-import * as React from "react";
-import TextField from "@mui/material/TextField";
+import { TextField } from "@mui/material";
+import { useRef, useState } from "react";
+
 import axios from "axios";
 import { LOGIN } from "../../constant/constants";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { authAction } from "../../store/config/storeConfig";
 import Cookies from "js-cookie";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
+import { useParams } from "react-router-dom";
 
-const BuyerLogin = (props) => {
+const Login = () => {
+  const postFormRef = useRef();
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const emailRef = useRef();
   const passwordRef = useRef();
-  const [loading, setLoading] = useState(false);
 
-  const [trigger, setTrigger] = useState(false);
+  const search = window.location.search;
 
-  const changeTrigger = () => {
-    if (props.event) {
-      setTrigger(true);
-    }
-  };
+  const query = new URLSearchParams(search).get("from");
 
   const doLogin = createAsyncThunk("login", async (userCredentials) => {
     const res = await axios.post(LOGIN, userCredentials);
@@ -43,11 +37,7 @@ const BuyerLogin = (props) => {
       password: document.getElementById("password").value,
     };
 
-    console.log(userCredentials);
-
     const result = await dispatch(doLogin(userCredentials));
-
-    handleClose();
 
     if (result.meta.requestStatus === "rejected") {
       Swal.fire({
@@ -80,51 +70,25 @@ const BuyerLogin = (props) => {
 
         setLoading(false);
 
-        navigate("/dashboard");
+        if (query !== "") {
+          navigate(query);
+        } else {
+          navigate("/dashboard");
+        }
       }
     }
   };
 
-  const isAuthenticated = useSelector(
-    (state) => state.auth.isBuyerAuthenticated
-  );
-
-  useEffect(() => {
-    if (trigger === true && !isAuthenticated) {
-      handleClickOpen();
-    }
-    changeTrigger();
-  }, [props.event]);
-
-  const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   return (
-    <>
-      {/* 
-
-           
-            
-          </form>
-        </div>
-      </div> */}
-
-      <form>
-        <Dialog open={open} onClose={handleClose}>
-          <DialogTitle>Login</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              To login, please enter email and password. Submit it pressing the
-              Login button.
-            </DialogContentText>
-
+    <div className="container">
+      <div className="row">
+        <div className="col-lg-6">
+          <h3>User Login</h3>
+          <p>
+            To login, please enter email and password. Submit it pressing the
+            Login button.
+          </p>
+          <form ref={postFormRef}>
             <TextField
               autoFocus
               margin="dense"
@@ -147,13 +111,13 @@ const BuyerLogin = (props) => {
               required
               variant="standard"
             />
-          </DialogContent>
-          <DialogActions>
-            <button onClick={handleClose} className="btn btn-primary">
-              Cancel
-            </button>
+
             {loading === true ? (
-              <button className="btn btn-success" disabled>
+              <button
+                className="btn btn-success"
+                disabled
+                style={{ margin: "10px" }}
+              >
                 <span
                   className="spinner-border spinner-border-sm"
                   role="status"
@@ -163,20 +127,25 @@ const BuyerLogin = (props) => {
               </button>
             ) : (
               <button
-                type="submit"
                 onClick={(e) => onLoginRequestHandler(e)}
+                type="submit"
                 className="btn btn-success"
+                style={{ margin: "10px" }}
               >
                 Login
               </button>
             )}
-            <button className="btn btn-danger" type="reset">
-              Reset
-            </button>
-          </DialogActions>
-        </Dialog>
-      </form>
-    </>
+            {loading === false ? (
+              <button className="btn btn-danger" type="reset">
+                Reset
+              </button>
+            ) : (
+              ""
+            )}
+          </form>
+        </div>
+      </div>
+    </div>
   );
 };
-export default BuyerLogin;
+export default Login;

@@ -1,47 +1,125 @@
-import { Fragment, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { TextField } from "@mui/material";
+import axios from "axios";
+import { Fragment, useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import { FETCHPRODUCT, POSTREVIEW } from "../../constant/constants";
+import Products from "../../container/products/products";
 import { cartAction } from "../../store/config/storeConfig";
-
-// const data = {
-//   linkOne: {
-//     component: "<ProductDetail>",
-//     href: "",
-//     label: "Blue Shirt",
-//   },
-// };
+import Cookies from "js-cookie";
+import Review from "./review";
 
 const ProductDetail = () => {
-  const cart = useSelector((state) => state.cartData.cart);
   const dispatch = useDispatch();
+
+  const param = useParams();
 
   const qtyRef = useRef();
 
-  const getProductDetail = () => {
-    return {
-      id: 1,
-      product: "Blue Jacket",
-      brand: "Nike",
-      price: "552.00",
-      qty: qtyRef.current.value,
-    };
+  const reviewRef = useRef();
+
+  let productId = param.productID;
+
+  const [productDetail, setProductDetail] = useState([]);
+
+  const [flag, setFlag] = useState(false);
+
+  const fetchProductData = () => {
+    axios
+      .get(FETCHPRODUCT + productId)
+      .then((response) => setProductDetail(response.data))
+      .catch((error) => console.log(error.message));
   };
+
+  const headerData = {
+    Authorization: Cookies.get("accessToken"),
+    "Content-Type": "application/json",
+  };
+
+  const onCommentHandler = async (e) => {
+    e.preventDefault();
+    if (e.keyCode === 13) {
+      if (reviewRef.value === "") {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...Cannot post empty field",
+          text: "Review must not be empty for post!!!It's required!!",
+        });
+      } else {
+        const commentData = {
+          title: reviewRef.value,
+          content: reviewRef.value,
+          productId: productId,
+        };
+        try {
+          await axios.post(POSTREVIEW, commentData, { headers: headerData });
+          Swal.fire("Commented", "Your review has been posted.", "success");
+          reviewRef.value = "";
+          setFlag(!flag);
+        } catch (error) {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...Problem Saving Comment!!!",
+            text: error.message,
+          });
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchProductData();
+  }, [productId,flag]);
 
   const addToCart = (e) => {
     e.preventDefault();
-    dispatch(cartAction.add(getProductDetail()));
+    productDetail.quantity = parseInt(qtyRef.current.value);
+
+    if (dispatch(cartAction.add(productDetail))) {
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: productDetail.name + " added successfully",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
   };
 
   const executeSub = () => {
+    if (qtyRef.current.value === "NaN") {
+      qtyRef.current.value = 0;
+    }
     if (qtyRef.current.value > 0) {
       qtyRef.current.value = qtyRef.current.value - 1;
     }
   };
 
   const executeAdd = () => {
+    if (qtyRef.current.value === "NaN") {
+      qtyRef.current.value = 0;
+    }
     const data = qtyRef.current.value;
-    qtyRef.current.value = data + 1;
+    qtyRef.current.value = parseInt(data) + 1;
   };
+
+  const addToCartFromRelated = (e, data) => {
+    e.preventDefault();
+    data.quantity = 1;
+    if (dispatch(cartAction.add(data))) {
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: data.name + " added successfully",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  };
+
+  let listReview = "";
 
   return (
     <Fragment>
@@ -51,44 +129,10 @@ const ProductDetail = () => {
           <div className="row">
             <div className="col-md-6">
               <div className="product-thumbnail">
-                <div className="col-md-2 col-sm-2 col-xs-2">
-                  <ul className="thumb-image">
-                    <li className="active">
-                      <a href="/images/single-product-1.jpg">
-                        <img src="/images/single-product-1.jpg" alt="" />
-                      </a>
-                    </li>
-
-                    <li>
-                      <a href="/images/single-product-2.jpg">
-                        <img src="/images/single-product-2.jpg" alt="" />
-                      </a>
-                    </li>
-
-                    <li>
-                      <a href="/images/single-product-3.jpg">
-                        <img src="/images/single-product-3.jpg" alt="" />
-                      </a>
-                    </li>
-
-                    <li>
-                      <a href="http//www:google.com">
-                        <img src="/images/single-product-4.jpg" alt="" />
-                      </a>
-                    </li>
-
-                    <li>
-                      <a href="http//www:google.com">
-                        <img src="/images/single-product-5.jpg" alt="" />
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-
                 <div className="col-md-10 col-sm-10 col-xs-10">
                   <div className="thumb-main-image">
                     <Link to="">
-                      <img src="/images/single-product-1.jpg" alt="" />
+                      <img src={productDetail.picture} alt="" />
                     </Link>
                   </div>
                 </div>
@@ -98,7 +142,7 @@ const ProductDetail = () => {
             </div>
 
             <div className="col-md-6">
-              <h1 className="product-title">Blue Jacket</h1>
+              <h1 className="product-title">{productDetail.name}</h1>
 
               <div className="ratings">
                 <i className="fa fa-star"></i>
@@ -111,31 +155,24 @@ const ProductDetail = () => {
 
                 <i className="fa fa-star"></i>
 
-                <span className="vote-count">35 vote</span>
+                <span className="vote-count">
+                  {productDetail.rating} rating
+                </span>
               </div>
 
               <div className="product-info">
-                <span className="product-id">
-                  <span className="strong-text">Product ID:</span> RST 4562
-                </span>
-
                 <span className="product-avilability">
-                  <span className="strong-text">Availability:</span> In Stock
+                  <span className="strong-text">Availability:</span>
+                  {productDetail.quantity > 0 ? "Stock" : "Out of Stock"}
                 </span>
               </div>
 
               <p className="short-info">
-                Lorem ipsum dolor sit amet, feugiat delicata liberavisse id cum,
-                no quo maiorum intellegebat, liber regione eu sit. Mea cu case
-                ludus integre, vide viderer eleifend ex mea. His at soluta
-                regione diceret, cum et atqui placerat petentium. Lorem ipsum
-                dolor sit amet, feugiat delicata liberavisse id cum, no quo
-                maiorum intellegebat, lie diceret, cum et atqui placerat
-                petentium.
+                It's an {productDetail.productIndex} item
               </p>
 
               <div className="price">
-                <span>$522.00</span>
+                <span>${productDetail.cost}</span>
               </div>
 
               <form action="" className="purchase-form">
@@ -145,7 +182,7 @@ const ProductDetail = () => {
                   <input
                     name="quantity"
                     className="qt"
-                    value="1"
+                    defaultValue={1}
                     ref={qtyRef}
                   />
 
@@ -162,45 +199,21 @@ const ProductDetail = () => {
               </form>
 
               <p>
-                <span className="strong-text">Categories:</span> Pants, T-Shirt,
-                Jama
+                <span className="strong-text">Categories:</span>{" "}
+                {productDetail.category}
               </p>
 
               <p>
-                <span className="strong-text">Tags:</span> GonShop, theme-sky,
-                woocommerce, wordpress
+                <span className="strong-text">Tags:</span> {productDetail.tags}
               </p>
-
-              {/* <ul className="product-info-btn">
-                <li>
-                  <Link to="">
-                    <i className="fa fa-heart-o"></i> Wishlist
-                  </Link>
-                </li>
-
-                <li>
-                  <Link to="">
-                    <i className="fa fa-arrows-h"></i> Compare
-                  </Link>
-                </li>
-
-                <li>
-                  <Link to="">
-                    <i className="fa fa-envelope-o"></i> Email
-                  </Link>
-                </li>
-
-                <li>
-                  <Link to="">
-                    <i className="fa fa-print"></i> Print
-                  </Link>
-                </li>
-              </ul> */}
-
-              <p>
-                <i className="fa fa-check"></i> Let's start with the most
-                essential part of any written content. At the early
-              </p>
+              <TextField
+                id="comment"
+                ref={reviewRef}
+                label="Add review and press enter to save review"
+                variant="standard"
+                fullWidth
+                onKeyUp={(e) => onCommentHandler(e)}
+              />
             </div>
           </div>
         </div>
@@ -211,57 +224,17 @@ const ProductDetail = () => {
           <div className="single-product-tabs">
             <ul className="nav nav-tabs nav-single-product-tabs">
               <li className="active">
-                <Link to="#description" data-toggle="tab">
-                  Description
-                </Link>
-              </li>
-
-              <li>
-                <Link to="#reviews" data-toggle="tab">
+                <Link to="" data-toggle="tab">
                   Reviews
                 </Link>
               </li>
             </ul>
 
             <div className="tab-content">
-              <div className="tab-pane active" id="description">
-                <div className="product-desc">
-                  <h2>Product Description</h2>
-
-                  <p>
-                    Ultricies et consectetur rhoncus lorem mattis, ligula
-                    interdum nibh dolor ipsum, venenatis ultrices sem nisl
-                    senectus phasellus lectus facilisis gravida curabitur
-                    interdum pretium et pellentesque nullam auctor vestibulum
-                    aenean ipsum placerat erat volutpat lectus mi est lacinia
-                    sociosqu, pretium habitasse aenean eros tristique augue a
-                    vivamus ac, sapien blandit nullam et neque curabitur varius
-                    nostra dui dictum cras orci congue. Ultricies et consectetur
-                    rhoncus lorem mattis, ligula interdum nibh dolor ipsum,
-                    venenatis ultrices sem nisl senectus phasellus lectus
-                    facilisis gravida curabitur interdum pretium et pellentesque
-                    nullam auctor vestibulum aenean ipsum placerat
-                  </p>
-                </div>
-              </div>
-
-              <div className="tab-pane" id="reviews">
+              <div className="tab-pane active" id="reviews">
                 <div className="product-desc">
                   <h2>Product Review</h2>
-                  <p>
-                    Ultricies et consectetur rhoncus lorem mattis, ligula
-                    interdum nibh dolor ipsum, venenatis ultrices sem nisl
-                    senectus phasellus lectus facilisis gravida curabitur
-                    interdum pretium et pellentesque nullam auctor vestibulum
-                    aenean ipsum placerat erat volutpat lectus mi est lacinia
-                    sociosqu, pretium habitasse aenean eros tristique augue a
-                    vivamus ac, sapien blandit nullam et neque curabitur varius
-                    nostra dui dictum cras orci congue. Ultricies et consectetur
-                    rhoncus lorem mattis, ligula interdum nibh dolor ipsum,
-                    venenatis ultrices sem nisl senectus phasellus lectus
-                    facilisis gravida curabitur interdum pretium et pellentesque
-                    nullam auctor vestibulum aenean ipsum placerat
-                  </p>
+                  {/* <Review review={productDetail.reviews}></Review> */}
                 </div>
               </div>
             </div>
@@ -269,55 +242,7 @@ const ProductDetail = () => {
         </div>
       </div>
 
-      <div className="container">
-        <div className="row">
-          <div className="related-items">
-            <ul className="nav nav-tabs nav-single-product-tabs">
-              <li className="active">
-                <Link to="#related" data-toggle="tab">
-                  Related Products
-                </Link>
-              </li>
-            </ul>
-
-            <div className="tab-content">
-              <div className="tab-pane active" id="related">
-                {/* Related Product */}
-
-                <div className="col-md-3 col-sm-4">
-                  <div className="single-product">
-                    <div className="product-block">
-                      <img
-                        src="/images/product-4.jpg"
-                        alt=""
-                        className="thumbnail"
-                      />
-
-                      <div className="product-description text-center">
-                        <p className="title">Date Tiffany Torchiere</p>
-
-                        <p className="price">$ 55.00</p>
-                      </div>
-
-                      <div className="product-hover">
-                        <ul>
-                          <li>
-                            <Link to="">
-                              <i className="fa fa-cart-arrow-down"></i>
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* End of Realted Product */}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Products tag={"related products"} cart={addToCartFromRelated} />
     </Fragment>
   );
 };
