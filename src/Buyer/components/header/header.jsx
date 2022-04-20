@@ -39,7 +39,7 @@ const Header = () => {
           <div className="col-md-2 col-sm-3">
             <div className="cart">
               <div className="cart-icon">
-                <Link to={""}>
+                <Link to={"/cart"}>
                   <i className="fa fa-shopping-cart"></i>
                 </Link>
               </div>

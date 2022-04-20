@@ -72,22 +72,6 @@ const AppBar = () => {
               </li>
 
               <li>
-                <Link to="cart">Cart</Link>
-              </li>
-
-              <li>
-                <Link to="#">Features</Link>
-              </li>
-
-              <li>
-                <Link to="#">Media</Link>
-              </li>
-
-              <li>
-                <Link to="#">About Us</Link>
-              </li>
-
-              <li>
                 <Link to="#">Contact Us</Link>
               </li>
             </ul>

@@ -43,8 +43,6 @@ const BuyerLogin = (props) => {
       password: document.getElementById("password").value,
     };
 
-    console.log(userCredentials);
-
     const result = await dispatch(doLogin(userCredentials));
 
     handleClose();

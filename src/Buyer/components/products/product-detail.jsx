@@ -26,8 +26,8 @@ const ProductDetail = () => {
 
   const [flag, setFlag] = useState(false);
 
-  const fetchProductData = () => {
-    axios
+  const fetchProductData = async () => {
+    await axios
       .get(FETCHPRODUCT + productId)
       .then((response) => setProductDetail(response.data))
       .catch((error) => console.log(error.message));
@@ -71,7 +71,7 @@ const ProductDetail = () => {
 
   useEffect(() => {
     fetchProductData();
-  }, [productId,flag]);
+  }, [productId]);
 
   const addToCart = (e) => {
     e.preventDefault();
@@ -119,7 +119,7 @@ const ProductDetail = () => {
     }
   };
 
-  let listReview = "";
+
 
   return (
     <Fragment>
@@ -234,7 +234,7 @@ const ProductDetail = () => {
               <div className="tab-pane active" id="reviews">
                 <div className="product-desc">
                   <h2>Product Review</h2>
-                  {/* <Review review={productDetail.reviews}></Review> */}
+                  <Review productId={productDetail.id} flag={flag}></Review>
                 </div>
               </div>
             </div>
