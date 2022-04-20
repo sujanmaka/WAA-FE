@@ -1,16 +1,22 @@
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { GETACTIVEUSER, GETORDERS } from "../../constant/constants";
+import {
+  CANCELORDER,
+  GETACTIVEUSER,
+  GETORDERS,
+} from "../../constant/constants";
 import Swal from "sweetalert2";
 import { FETCHPRODUCT } from "../../constant/constants";
 import OrderTable from "./orderTable";
+import {useNavigate} from "react-router-dom"
 
 const OrderDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [userDetail, setUserDetail] = useState([]);
-
+  const navigate = useNavigate();
+  
   const headerData = {
     Authorization: Cookies.get("accessToken"),
     "Content-Type": "application/json",
@@ -61,6 +67,21 @@ const OrderDashboard = () => {
     });
   };
 
+  const cancelOrderHandler = async (e, id) => {
+    e.preventDefault();
+    console.log(id);
+    await axios.put(CANCELORDER + id + "/cancel", null,{ headers: headerData }).then(respose=>{
+       Swal.fire({
+         position: "top-end",
+         icon: "success",
+         title: "Order Cancelled",
+         showConfirmButton: false,
+         timer: 1500,
+       });
+      navigate("/orderdashboard");
+    })
+  };
+
   let orderJSX = (
     <div className="container">
       <div className="row">
@@ -74,11 +95,16 @@ const OrderDashboard = () => {
               <th scope="col">Quantity</th>
               <th scope="col">Order Status</th>
               <th scope="col">Payment Status</th>
+              <th scope="col"></th>
             </tr>
           </thead>
           <tbody>
             {orders.map((data) => (
-              <OrderTable data={data} key={data.id}></OrderTable>
+              <OrderTable
+                data={data}
+                key={data.id}
+                cancel={cancelOrderHandler}
+              ></OrderTable>
             ))}
           </tbody>
         </table>

@@ -1,15 +1,19 @@
 import { TextField } from "@mui/material";
 import axios from "axios";
 import { Fragment, useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import { FETCHPRODUCT, POSTREVIEW } from "../../constant/constants";
+import {
+  FETCHFOLLOWSELLER,
+  FETCHPRODUCT,
+  POSTREVIEW,
+  PUTFOLLOWERFORBUYER,
+} from "../../constant/constants";
 import Products from "../../container/products/products";
 import { cartAction } from "../../store/config/storeConfig";
 import Cookies from "js-cookie";
-import Review from "./review";
 
 const ProductDetail = () => {
   const dispatch = useDispatch();
@@ -24,12 +28,34 @@ const ProductDetail = () => {
 
   const [productDetail, setProductDetail] = useState([]);
 
+
+  const [follow, setFollow] = useState(false);
+
   const [flag, setFlag] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+
+  const isAuthenticated = useSelector(
+    (state) => state.auth.isBuyerAuthenticated
+  );
 
   const fetchProductData = async () => {
     await axios
       .get(FETCHPRODUCT + productId)
-      .then((response) => setProductDetail(response.data))
+      .then((response) => {
+        setProductDetail(response.data);
+      })
+      .catch((error) => console.log(error.message));
+  };
+
+  const fetchSellerFollower = async () => {
+    await axios
+      .get(FETCHFOLLOWSELLER + "?sellerId=" + productDetail.sellerDto.id, {
+        headers: headerData,
+      })
+      .then((response) => {
+        setFollow(response.data);
+      })
       .catch((error) => console.log(error.message));
   };
 
@@ -57,7 +83,6 @@ const ProductDetail = () => {
           await axios.post(POSTREVIEW, commentData, { headers: headerData });
           Swal.fire("Commented", "Your review has been posted.", "success");
           reviewRef.value = "";
-          setFlag(!flag);
         } catch (error) {
           Swal.fire({
             icon: "error",
@@ -69,9 +94,31 @@ const ProductDetail = () => {
     }
   };
 
+  const getSellerFollowUnfollowHandler = async (e) => {
+
+    e.preventDefault();
+    setLoading(true);
+
+    const data = {
+      sellerId: productDetail.sellerDto.id,
+      follow: !follow,
+    };
+
+    try {
+      await axios.put(PUTFOLLOWERFORBUYER, data, { headers: headerData });
+      setFlag(!flag);
+    } catch (error) {
+      console.log(error);
+    }
+
+    setLoading(false);
+    
+  };
+
   useEffect(() => {
     fetchProductData();
-  }, [productId]);
+    fetchSellerFollower();
+  }, [productId, flag]);
 
   const addToCart = (e) => {
     e.preventDefault();
@@ -119,7 +166,39 @@ const ProductDetail = () => {
     }
   };
 
+  let FBUTTON = "";
 
+  if (loading === true && follow === false) {
+    FBUTTON = (
+      <button disabled className="btn btn-success">
+        Following Seller
+      </button>
+    );
+  } else if (loading === false && follow === false) {
+    FBUTTON = (
+      <button
+        className="btn btn-success"
+        onClick={(e) => getSellerFollowUnfollowHandler(e)}
+      >
+        Follow Seller
+      </button>
+    );
+  } else if (loading === false && follow === true) {
+    FBUTTON = (
+      <button
+        className="btn btn-danger"
+        onClick={(e) => getSellerFollowUnfollowHandler(e)}
+      >
+        Unfollow Seller
+      </button>
+    );
+  } else if (loading === true && follow === true) {
+    FBUTTON = (
+      <button disabled className="btn btn-danger">
+        Unfollowing Seller
+      </button>
+    );
+  }
 
   return (
     <Fragment>
@@ -206,6 +285,13 @@ const ProductDetail = () => {
               <p>
                 <span className="strong-text">Tags:</span> {productDetail.tags}
               </p>
+              <p>
+                <span className="strong-text">
+                  Seller :{" "}
+                  {productDetail.sellerDto ? productDetail.sellerDto.name : ""}
+                </span>
+                <span style={{marginLeft:"10px"}}>{isAuthenticated ? FBUTTON : ""}</span>
+              </p>
               <TextField
                 id="comment"
                 ref={reviewRef}
@@ -233,7 +319,6 @@ const ProductDetail = () => {
             <div className="tab-content">
               <div className="tab-pane active" id="reviews">
                 <div className="product-desc">
-                  
                   <p>{productDetail.description}</p>
                 </div>
               </div>

@@ -1,6 +1,6 @@
 
 import { useSelector } from "react-redux";
-import { Route, Routes } from "react-router-dom"
+import { Route, Routes,Navigate } from "react-router-dom"
 import Address from "../../components/address/address";
 import Login from "../../components/login/login";
 import OrderDashboard from "../../components/order/orderDashboard";
@@ -11,6 +11,7 @@ import Cart from "../../container/cart/cart";
 import CheckBill from "../../container/cart/check";
 
 import BuyerDashboard from "../../container/dashboard/buyerDashboard";
+ 
 
 const BuyerRoutes = () => {
 
@@ -30,6 +31,7 @@ const BuyerRoutes = () => {
             <Route path="/cart" element={<Cart />} />
             <Route path="/check" element={(isAuthenticated) ?<CheckBill />:<Login/>} />
             <Route path="/orders" element={(isAuthenticated)?<OrderDashboard />:<Login/>} />
+            <Route path="/orderdashboard" element={<Navigate replace to={"/orders"} />} />
 
 
             {/* Internal Routes */}

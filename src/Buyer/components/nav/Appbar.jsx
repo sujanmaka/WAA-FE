@@ -1,6 +1,10 @@
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 const AppBar = () => {
+
+  const isAuthenticated = useSelector(state=>state.auth.isBuyerAuthenticated);
+
   return (
     <div className="navigation">
       <nav className="navbar navbar-theme">
@@ -23,43 +27,37 @@ const AppBar = () => {
             </button>
           </div>
 
-          <div className="shop-category nav navbar-nav navbar-left">
-            <div className="btn-group">
-              <button
-                type="button"
-                className="btn btn-shop-category dropdown-toggle"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                Shop By Category <span className="caret"></span>
-              </button>
+          {isAuthenticated ? (
+            <div className="shop-category nav navbar-nav navbar-left">
+              <div className="btn-group">
+                <button
+                  type="button"
+                  className="btn btn-shop-category dropdown-toggle"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  Account <span className="caret"></span>
+                </button>
 
-              <ul className="dropdown-menu">
-                <li>
-                  <Link to="">Men</Link>
-                </li>
+                <ul className="dropdown-menu">
+                  <li>
+                    <Link to="">Profile</Link>
+                  </li>
 
-                <li>
-                  <Link to="">Women</Link>
-                </li>
+                  <li>
+                    <Link to="">Security</Link>
+                  </li>
 
-                <li>
-                  <Link to="">Kids</Link>
-                </li>
-
-                <li role="separator" className="divider"></li>
-
-                <li>
-                  <Link to="">Leather</Link>
-                </li>
-
-                <li>
-                  <Link to="">Electronics</Link>
-                </li>
-              </ul>
+                  <li>
+                    <Link to="/orders">Orders</Link>
+                  </li>
+                </ul>
+              </div>
             </div>
-          </div>
+          ) : (
+            ""
+          )}
 
           <div className="collapse navbar-collapse" id="navbar">
             <ul className="nav navbar-nav navbar-right">

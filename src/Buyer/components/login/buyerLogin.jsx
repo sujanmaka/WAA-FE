@@ -24,6 +24,9 @@ const BuyerLogin = (props) => {
 
   const [trigger, setTrigger] = useState(false);
 
+  const search = window.location.search;
+  const query = new URLSearchParams(search).get("from");
+
   const changeTrigger = () => {
     if (props.event) {
       setTrigger(true);
@@ -78,7 +81,11 @@ const BuyerLogin = (props) => {
 
         setLoading(false);
 
-        navigate("/dashboard");
+        if (query !== "") {
+          navigate(query);
+        } else {
+          navigate("/dashboard");
+        }
       }
     }
   };

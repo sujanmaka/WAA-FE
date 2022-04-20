@@ -9,3 +9,8 @@ export const POSTORDER = SERVER + "orders";
 export const GETORDERS = SERVER + "orders";
 export const GETACTIVEUSER = SERVER + "users/active";
 export const POSTREVIEW = SERVER + "reviews";
+export const FETCHFOLLOWSELLER = SERVER + "buyers/follows";
+export const PUTFOLLOWERFORBUYER = SERVER + "buyers/follows";
+// ? sellerId = 111
+export const CANCELORDER  = SERVER + "orders/";
+//id/cancel
