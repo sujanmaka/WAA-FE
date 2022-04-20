@@ -16,6 +16,8 @@ import { SOMETHING_WENT_WRONG, USER_ID } from "../../utils/constants/index";
 import { LocalStorage } from "../../utils/storage/localStorage";
 import Button from '@mui/material/Button';
 
+const linkStyle = {'color': '#0d6efd', 'textDecoration': 'underline'}
+
 export default function Header(props) {
   const [userFullName, setUserFullName] = useState([]);
   const classes = styles();
@@ -36,20 +38,6 @@ export default function Header(props) {
     setAnchorElNav(event.currentTarget);
   };
 
-  // const getUsername = () => {
-  //   WAA.get(API_URL.user)
-  //     .then(response => {
-  //       console.log(response)
-  //       setUserFullName(response.data.fullName);
-  //     }).catch(error => {
-  //       AddAlertMessage({ type: "error", message: SOMETHING_WENT_WRONG });
-  //     })
-  // }
-
-  // useEffect(() => {
-  //   getUsername();
-  // }, []);
-
   const logout = () => {
     WAA.get(API_URL.logout)
       .then(response => {
@@ -68,16 +56,8 @@ export default function Header(props) {
       <Toolbar>
         {/* ------ sulai: Menu List When Collapse Responsive - Start ----*/}
         <Box sx={{ flexGrow: 0, display: { xs: 'flex', md: 'none' } }}>
-          <IconButton 
-            size="medium"
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            onClick={handleOpenNavMenu}
-            color="inherit"
-          >
-            <MenuIcon />
-          </IconButton>
+          <Avatar src={logo} alt="Mini Online Market" onClick={handleOpenNavMenu} />
+
           <Menu id="menu-appbar"
             anchorEl={anchorElNav}
             anchorOrigin={{
@@ -100,10 +80,25 @@ export default function Header(props) {
             <MenuItem onClick={handleCloseNavMenu}>
               <Typography ><a href="/admin/dashboard/reviews">Review</a></Typography>
             </MenuItem>
+            <MenuItem>
+              <Link style={linkStyle} href="profile" variant="body1" className={classes.profileMenuLink}>
+                <Person className={classes.profileMenuIcon} />
+                Profile
+              </Link>
+            </MenuItem>
+            <MenuItem>
+              <Link style={linkStyle} onClick={logout} variant="body1" className={classes.profileMenuLink}>
+                <LogOutIcon className={classes.profileMenuIcon} />
+                Logout
+              </Link>
+            </MenuItem>
+
+
             {/* Right Side  Menu Items */}
           </Menu>
         </Box>
         {/* ------ sulai: Menu List When Collapse Responsive - End ----*/}
+
         <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
           <Avatar src={logo} alt="Mini Online Market" />
         </Box>
@@ -134,8 +129,11 @@ export default function Header(props) {
           <Typography variant="body1" className={classes.username}>
             {userFullName}
           </Typography>
-          <Avatar alt="Avatar" src={logo} />
+          <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
+            <Avatar alt="Avatar" src={logo} />
+          </Box>
         </Box>
+
         <Menu anchorEl={profileMenu} open={Boolean(profileMenu)} onClose={() => setProfileMenu(null)} classes={{ paper: classes.profileMenu }} disableAutoFocusItem>
           <MenuItem className={classes.profileMenuItem}>
             <Link onClick={logout} variant="body1" className={classes.profileMenuLink}>
