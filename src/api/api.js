@@ -17,6 +17,7 @@ export const API_URL = {
  changePassword: BASE_URL + "change-password",
  logout: BASE_URL + "logout",
  adminSellers: BASE_URL + "admins/sellers",
+ adminReviews: BASE_URL + "admins/reviews"
 };
  
 const WAA = axios.create({

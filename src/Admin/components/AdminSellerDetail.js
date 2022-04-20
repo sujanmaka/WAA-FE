@@ -1,14 +1,9 @@
 import React from 'react'
 import { Button } from '@mui/material';
-
-export const STATUS = {
-  approve: 'APPROVED',
-  reject: 'DECLINED',
-  created: 'CREATED'
-}
+import {STATUS} from './AdminSellers'
 
 export default function AdminSellerDetail(props) {
-  console.log('RENDER SELLER Detail')
+  console.log('SELLER DETAIL RENDER')
 
   const [remark, setRemark] = React.useState('')
 
@@ -17,7 +12,8 @@ export default function AdminSellerDetail(props) {
       'status' : STATUS.approve,
       'declineReason' : remark
     }
-    
+    console.log('data is ')
+    console.log(data)
     props.updateSellerStatus(props.detail.userId, props.detail.id, data , false)
   }
 

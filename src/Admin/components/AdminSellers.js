@@ -124,7 +124,7 @@ export default function AdminSellers() {
         setIsLoading(true);
         SellerService.getAllSellers().then(
             res => {
-                console.log('getAllSellers()')
+                //console.log('getAllSellers()')
                 setIsLoading(false);
                 let count = 0
                 let obj = [];//[{}]
@@ -199,14 +199,13 @@ export default function AdminSellers() {
     };
 
 
-    const handleApproveClick = useCallback(
-        (e, cellValues) => {
+    const handleApproveClick = (e, cellValues) => {
             const data = { 
                 'status' : STATUS.approve,
                 'declineReason' : ''
             }
             updateSellerStatus(cellValues.row.userId, cellValues.row.id, data, true)
-        }, [])
+    }
 
     const handleRejectClick = (e, cellValues) => {
         const data = { 
@@ -226,8 +225,8 @@ export default function AdminSellers() {
     return (
         <React.Fragment>
             <div className='bcrumb'>
-                <a style={{ 'color': '#494949' }} href="/sellers">Admin Dashboard</a>&nbsp;&gt;&nbsp;
-                <a style={{ 'color': '#494949' }} href="/sellers">Sellers</a>&nbsp;&gt;&nbsp;
+                <a style={{ 'color': '#494949' }} href={window.location.pathname}>Admin Dashboard</a>&nbsp;&gt;&nbsp;
+                <a style={{ 'color': '#494949' }} href={window.location.pathname}>Sellers</a>&nbsp;&gt;&nbsp;
                 <span style={{ 'color': '#494949' }} >Pending Sellers</span>
             </div>
             <h2>Pending Sellers</h2>

@@ -1,22 +1,21 @@
-import axios from "axios";
-import AuthHeader from "./AuthHeader";
+import WAA, { API_URL } from "../../api/api";
 
-const API_URL = '/reviews'
-const getAllPendingReviews = () => {
-    return axios.get(`${API_URL}/`, { headers: AuthHeader() })
+
+const getAllReviews = () => {
+    return WAA.get(API_URL.adminReviews)
 }
 
 const getReviewById = (id) =>{
-    return axios.get(`${API_URL}/${id}`, { headers: AuthHeader() })
+    return WAA.get(`${API_URL.adminReviews}/${id}`)
 }
 
-const updateReviewById = (id) =>{    
-    return axios.put(`${API_URL}/${id}`,{ headers: AuthHeader() })
+const updateReviewById = (id, data) =>{    
+    return WAA.put(`${API_URL.adminReviews}/${id}`, data)
 }
 
 
 const ReviewService = {
-    getAllPendingReviews,
+    getAllReviews,
     getReviewById,
     updateReviewById,
 }
