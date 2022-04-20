@@ -14,6 +14,7 @@ import {
 import Products from "../../container/products/products";
 import { cartAction } from "../../store/config/storeConfig";
 import Cookies from "js-cookie";
+import Review from "./review";
 
 const ProductDetail = () => {
   const dispatch = useDispatch();
@@ -28,12 +29,15 @@ const ProductDetail = () => {
 
   const [productDetail, setProductDetail] = useState([]);
 
-
   const [follow, setFollow] = useState(false);
 
   const [flag, setFlag] = useState(false);
 
   const [loading, setLoading] = useState(false);
+
+  const[reviews,setReviews] = useState([]);
+
+  const[seller,setSeller]=useState([]);
 
   const isAuthenticated = useSelector(
     (state) => state.auth.isBuyerAuthenticated
@@ -44,13 +48,16 @@ const ProductDetail = () => {
       .get(FETCHPRODUCT + productId)
       .then((response) => {
         setProductDetail(response.data);
+        setReviews(response.data.reviews);
+        setSeller(response.data.sellerDto);
       })
       .catch((error) => console.log(error.message));
   };
 
+
   const fetchSellerFollower = async () => {
     await axios
-      .get(FETCHFOLLOWSELLER + "?sellerId=" + productDetail.sellerDto.id, {
+      .get(FETCHFOLLOWSELLER + "?sellerId=" + seller.id, {
         headers: headerData,
       })
       .then((response) => {
@@ -75,14 +82,15 @@ const ProductDetail = () => {
         });
       } else {
         const commentData = {
-          title: reviewRef.value,
-          content: reviewRef.value,
+          title: e.target.value,
+          content: e.target.value,
           productId: productId,
         };
         try {
           await axios.post(POSTREVIEW, commentData, { headers: headerData });
           Swal.fire("Commented", "Your review has been posted.", "success");
           reviewRef.value = "";
+          setFlag(!flag);
         } catch (error) {
           Swal.fire({
             icon: "error",
@@ -95,7 +103,6 @@ const ProductDetail = () => {
   };
 
   const getSellerFollowUnfollowHandler = async (e) => {
-
     e.preventDefault();
     setLoading(true);
 
@@ -112,7 +119,6 @@ const ProductDetail = () => {
     }
 
     setLoading(false);
-    
   };
 
   useEffect(() => {
@@ -199,6 +205,11 @@ const ProductDetail = () => {
       </button>
     );
   }
+ 
+    const dataForReview = reviews.map((data) => {
+      return <Review data={data} key={data.id}></Review>;
+    });
+  
 
   return (
     <Fragment>
@@ -290,7 +301,9 @@ const ProductDetail = () => {
                   Seller :{" "}
                   {productDetail.sellerDto ? productDetail.sellerDto.name : ""}
                 </span>
-                <span style={{marginLeft:"10px"}}>{isAuthenticated ? FBUTTON : ""}</span>
+                <span style={{ marginLeft: "10px" }}>
+                  {isAuthenticated ? FBUTTON : ""}
+                </span>
               </p>
               <TextField
                 id="comment"
@@ -320,6 +333,29 @@ const ProductDetail = () => {
               <div className="tab-pane active" id="reviews">
                 <div className="product-desc">
                   <p>{productDetail.description}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="container">
+        <div className="row">
+          <div className="single-product-tabs">
+            <ul className="nav nav-tabs nav-single-product-tabs">
+              <li className="active">
+                <Link to="" data-toggle="tab">
+                  Product Reviews
+                </Link>
+              </li>
+            </ul>
+
+            <div className="tab-content">
+              <div className="tab-pane active" id="reviews">
+                <div className="product-desc">
+                  {/* <Review id={productId} flag={flag}/> */}
+                  {dataForReview}
                 </div>
               </div>
             </div>
