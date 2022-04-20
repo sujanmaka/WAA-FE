@@ -106,7 +106,7 @@ export default function Header(props) {
           noWrap
           component="div"
           sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}>
-          Mini Online Market: Role : {AppUtils.getUserRole()} :: &nbsp;&nbsp;
+          &nbsp;&nbsp;Mini Online Market: Role : {AppUtils.getUserRole()} :: &nbsp;&nbsp;
         </Typography>
 
         {/* ------ sulai: Wide Menu - Start ----*/}
