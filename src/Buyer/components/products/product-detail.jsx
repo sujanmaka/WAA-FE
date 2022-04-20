@@ -233,7 +233,7 @@ const ProductDetail = () => {
             <div className="tab-content">
               <div className="tab-pane active" id="reviews">
                 <div className="product-desc">
-                  <h2>Product Review</h2>
+                  
                   <p>{productDetail.description}</p>
                 </div>
               </div>
